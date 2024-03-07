@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-service
+  labels:
+    app: flask-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-service
+  # pod spec begins here
+  template:
+    metadata:
+      labels:
+        app: flask-service
+    spec:
+      containers:
+        - name: flask-service
+          image: registry.digitalocean.com/lab8class/new-flask-app:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000

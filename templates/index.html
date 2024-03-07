@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+</head>
+<body>
+    <h1>Number Guessing Game</h1>
+    <button id="startGame">Start Game</button>
+    <div id="gameStatus"></div>
+    <input type="number" id="userGuess" placeholder="Enter #" min="1" max="100">
+    <button id="submitGuess">Guess</button>
+    <div id="guessResult"></div>
+    <div id="guessHistory"></div>
+
+    <script>
+        document.getElementById('startGame').addEventListener('click', () => {
+            fetch('/start')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('gameStatus').textContent = data.message;
+                    document.getElementById('guessHistory').textContent = '';
+                });
+        });
+
+        document.getElementById('submitGuess').addEventListener('click', () => {
+            const guess = document.getElementById('userGuess').value;
+            fetch('/guess', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ number: parseInt(guess, 10) }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('guessResult').textContent = data.message;
+                document.getElementById('guessHistory').textContent = 'Previous guesses: ' + data.history.join(', ');
+                if (!data.message.includes('Too')) {
+                    document.getElementById('gameStatus').textContent = 'Game over. Start a new game.';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
